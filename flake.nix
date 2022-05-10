@@ -17,6 +17,8 @@
         overlay = (final: prev: {
           main = final.libsForQt5.callPackage ./. { };
         });
+
+        overlays = [ overlay ];
       in
       rec {
         apps.main = {
