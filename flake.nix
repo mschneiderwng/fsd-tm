@@ -34,7 +34,8 @@
 
         packages = {
           main = pkgs.main.package;
-          venv = pkgs.python3.withPackages (ps: [ ps.numpy packages.main ]);
+          venv = pkgs.python3.withPackages (ps: [ packages.main ]);
+          default = packages.venv;
         };
         defaultPackage = packages.venv;
       }));
