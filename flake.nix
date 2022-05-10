@@ -21,7 +21,7 @@
         overlays = [ overlay ];
       in
       rec {
-        apps.main = {
+        apps.default = {
           type = "app";
           program = "${pkgs.main.package}/bin/run.py";
         };
