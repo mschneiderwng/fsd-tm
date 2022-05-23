@@ -6,6 +6,7 @@ Clone repository:
 
 
 Run program:
+
 	python src/run.py
 
 ## Development with Nix
