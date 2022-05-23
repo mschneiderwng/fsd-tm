@@ -1,7 +1,6 @@
-# nix-flake-poetry-example
+# Demo: Teachable Machine with Python
 
-
-## Development
+## Development with Nix
 
 To drop into a shell:
 
@@ -9,7 +8,7 @@ To drop into a shell:
 	
 To run a python file quick:
 
-	nix develop -c python etaml/__init__.py
+	nix develop -c python src/run.py
 
 	nix run
 	
@@ -33,15 +32,3 @@ To build the package:
 
 To create a venv for PyCharm:
 	nix build .#venv -o venv
-
-Results will be placed in `./result`. Run a wrapper script with:
-
-	nix build .#etaml && ./result/bin/run.py
-
-Create data:
-
-	nix build .#data && cat result/data.txt
-
-## See also
-https://josephsdavid.github.io/nix.html
-https://github.com/nix-community/nix-data-science/blob/master/overlays.nix
