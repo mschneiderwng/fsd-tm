@@ -1,5 +1,13 @@
 # Demo: Teachable Machine with Python
 
+Clone repository:
+
+	git clone https://github.com/mschneiderwng/fsd-tm.git
+
+
+Run program:
+	python src/run.py
+
 ## Development with Nix
 
 To drop into a shell:
