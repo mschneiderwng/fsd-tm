@@ -66,6 +66,7 @@ def main():
         cv.imshow("frame", frame)
         if cv.waitKey(1) == ord("q"):
             break
+
     # When everything done, release the capture
     cap.release()
     cv.destroyAllWindows()
