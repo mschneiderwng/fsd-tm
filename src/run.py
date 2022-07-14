@@ -5,6 +5,26 @@ from PIL import Image, ImageOps
 import cv2 as cv
 
 
+def forward():
+    print('forward')
+
+
+def backward():
+    print('backward')
+
+
+def left():
+    print('left')
+
+
+def right():
+    print('right')
+
+
+def none():
+    print('none')
+
+
 def predict(model, frame):
     # make predictions with model on frame
     size = (224, 224)
@@ -23,7 +43,7 @@ def predict(model, frame):
     data[0] = normalized_image_array
     # run the inference
     prediction = model.predict(data)
-    return prediction
+    return prediction[0, :]
 
 
 def load_labels(path):
@@ -31,16 +51,16 @@ def load_labels(path):
     with open(path) as fp:
         return dict(map(lambda line: line.split(" ", 1), map(str.strip, fp.readlines())))
 
-def prep_frame(frame):
-    dimens = frame.shape
 
-    height = dimens[0]
-    width = dimens[1]
+def rectify(frame):
+    # cut image the same way teachable machine does
+    height, width = frame.shape[0:2]
     x = int((width - height) / 2)
     y = 0
     w = height
     h = height
     return frame[y:y+h, x:x+w]
+
 
 def main():
     # Load the model
@@ -55,31 +75,41 @@ def main():
     while True:
         # Capture frame-by-frame
         ret, frame = cap.read()
-        
+
         # if frame is read correctly ret is True
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
             break
 
-        image = prep_frame(frame)
-
+        image = rectify(frame)
         prediction = predict(model, image)
-        labelidx = str(np.argmax(prediction[0, :]))
-        labelstr = labels[labelidx]
-        print("pred: {:.2f}, {:.2f}".format(
-            prediction[0, 0], prediction[0, 1]), end="\t")
-        print("labelidx: {}\t labelstr: {}".format(labelidx, labelstr))
 
-        image = cv.flip(image, 1)
+        # print classification probabilities
+        with np.printoptions(precision=2, suppress=True, floatmode='fixed'):
+            print(f'pred: {prediction}', end='\t')
 
-        cv.putText(
-            image,
-            "Label: {}".format(labelstr),  # print text on frame
-            (25, 35), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv.LINE_AA,  # pos
-        )
+        # check if prediction are certain, ie have a probability > 95%
+        if np.max(prediction) < 0.95:
+            print(f'prediction too uncertain -> no command')
+        else:
+            # depending on the class, call movement action
+            labelidx = str(np.argmax(prediction))
+            labelstr = labels[labelidx]
+            if labelstr == 'forward':
+                forward()
+            elif labelstr == 'backward':
+                backward()
+            elif labelstr == 'left':
+                left()
+            elif labelstr == 'right':
+                right()
+            elif labelstr == 'none':
+                none()
+            else:
+                print(f'unknown label: {labelstr} -> no command')
 
         # Display the resulting frame
-        cv.imshow("frame", image)
+        cv.imshow("frame",  cv.flip(image, 1))
         if cv.waitKey(1) == ord("q"):
             break
 
