@@ -90,7 +90,8 @@ def main():
 
         # check if prediction are certain, ie have a probability > 95%
         if np.max(prediction) < 0.95:
-            print(f'prediction too uncertain -> no command')
+            print(f'prediction too uncertain', end=' ')
+            none()
         else:
             # depending on the class, call movement action
             labelidx = str(np.argmax(prediction))
